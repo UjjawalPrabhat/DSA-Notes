@@ -1,0 +1,2 @@
+// gcd by Euclidean algo
+
