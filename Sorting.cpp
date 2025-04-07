@@ -26,7 +26,7 @@ void bubbleSort(int a[], int n)
 {
     for (int i = 0; i < n; i++)
     {
-        int didSwap=0;
+        int didSwap = 0;
         for (int j = 0; j < n - 1; j++)
         {
             if (a[j] > a[j + 1])
@@ -37,8 +37,8 @@ void bubbleSort(int a[], int n)
                 didSwap++;
             }
         }
-        if(didSwap==0)
-        break;
+        if (didSwap == 0)
+            break;
     }
 }
 
@@ -46,17 +46,16 @@ void bubbleSort(int a[], int n)
 // O(n) for best case
 void insertionSort(int a[], int n)
 {
-    for (int i = 0; i <n; i++)
+    for (int i = 0; i < n; i++)
     {
-        int j=i;
-        while(j>0 && a[j]<a[j-1])
+        int j = i;
+        while (j > 0 && a[j] < a[j - 1])
         {
-            int temp=a[j];
-            a[j]=a[j-1];
-            a[j-1]=temp;
+            int temp = a[j];
+            a[j] = a[j - 1];
+            a[j - 1] = temp;
             j--;
         }
-
     }
 }
 
@@ -66,6 +65,53 @@ void printArray(int a[], int n)
     {
         cout << a[i] << " ";
     }
+}
+
+void merge(vector<int> &arr, int l, int m, int r)
+{
+    vector<int> temp;
+    int left = l;
+    int right = m + 1;
+
+    while (left <= m && right <= r)
+    {
+        if (arr[left] <= arr[right])
+        {
+            temp.emplace_back(arr[left]);
+            left++;
+        }
+        else
+        {
+            temp.emplace_back(arr[right]);
+            right++;
+        }
+    }
+    while (left <= m)
+    {
+        temp.emplace_back(arr[left]);
+        left++;
+    }
+    while (right <= r)
+    {
+        temp.emplace_back(arr[right]);
+        right++;
+    }
+    for (int i = l; i <= r; i++)
+    {
+        arr[i] = temp[i - l];
+    }
+}
+void mergeSort(vector<int> &arr, int l, int r)
+{
+    // Time Complexity - O(nlogn) for all three best,worst or average
+    // Space Complexity - O(n)
+    
+    if (l == r)
+        return;
+    int m = (l + r) / 2;
+    mergeSort(arr, l, m);
+    mergeSort(arr, m + 1, r);
+    merge(arr, l, m, r);
 }
 
 int main()

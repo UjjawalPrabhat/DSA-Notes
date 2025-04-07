@@ -8,9 +8,9 @@
 // 7. No need to give size at the time of declaration
 // 8. No need to give the type of data at the time of declaration
 
-// Starting point of the LinkedList is called Head of the LinkedList
-// And the head of the LinkedList is stored at the m1 location
-// Ending point of the LinkedList is called Tail of the LinkedList
+// Starting point of the Linked is called Head of the Linked
+// And the head of the Linked is stored at the m1 location
+// Ending point of the Linked is called Tail of the Linked
 
 // Used in stack, queue mostly
 // In real life it's used in a browser
@@ -46,8 +46,8 @@ public:
 };
 
 // What is a node? - A node is a block of memory that stores data and a pointer to the next node
-// What is a LinkedList? - A LinkedList is a collection of nodes
-// What is a singly LinkedList? - A LinkedList in which each node has a pointer to the next node
+// What is a Linked? - A Linked is a collection of nodes
+// What is a singly Linked? - A Linked in which each node has a pointer to the next node
 
 Node *convertArr2LL(vector<int> &arr)
 {
@@ -216,7 +216,7 @@ Node *insertKthNode(Node *head, int k, int el)
     return head;
 }
 
-Node *insertBeforeValue(Node *head, int x, int el)
+Node *insertBeforeX(Node *head, int x, int el)
 {
     if (head == NULL)
         return new Node(el);
@@ -476,8 +476,16 @@ bool checkPanlindrome(Node *head)
     return true;
 }
 
-Node *oddEvenList(Node *head)
+Node *oddEven(Node *head)
 {
+    // Brute
+    // Using array just store even and odd and then overwrite the LL
+    // Time complexity - O(n) with two passes
+    // Space complexity - O(n) with extra space for array
+
+    // Optimal
+    // Time complexity - O(n) with one pass
+    // Space complexity - O(1)
     if (head == nullptr || head->next == nullptr || head->next->next == nullptr)
         return head;
 
@@ -540,12 +548,354 @@ Node *removeNthFromEnd(Node *head, int n)
     // Space complexity - O(1)
     if (head->next == nullptr && n == 1)
         return nullptr;
-    
+
+    Node *fast = head;
+    int count = 1;
+    while (count != n)
+    {
+        fast = fast->next;
+        count++;
+    }
+
+    if (fast->next == nullptr)
+    {
+        Node *newHead = head->next;
+        delete head;
+        return newHead;
+    }
+
+    Node *slow = head;
+    while (fast->next->next != nullptr)
+    {
+        slow = slow->next;
+        fast = fast->next;
+    }
+    Node *temp = slow->next;
+    if (n == 1)
+        slow->next = nullptr;
+    else
+        slow->next = slow->next->next;
+    delete temp;
+
+    return head;
 }
+
+Node *deleteMiddle(Node *head)
+{
+    // Brute
+    // Find the length of the LL and then find the middle element and delete it
+    // Time complexity - O(n) with two passes
+    // Space complexity - O(1)
+
+    // Optimal
+    // Time complexity - O(n) with one pass
+    // Space complexity - O(1)
+    if (head->next == nullptr)
+        return nullptr;
+
+    Node *fast = head;
+    Node *slow = head;
+    while (fast->next->next != nullptr && fast->next->next->next != nullptr)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    Node *temp = slow->next;
+    if (slow->next->next == nullptr)
+        slow->next = nullptr;
+    else
+        slow->next = slow->next->next;
+    delete temp;
+
+    return head;
+}
+
+Node *midOfLL(Node *head)
+{
+    Node *slow = head;
+    Node *fast = head;
+    while (fast->next != nullptr && fast->next->next != nullptr)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    return slow;
+}
+Node *merge(Node *leftHead, Node *rightHead)
+{
+
+    Node *dummyNode = new Node(-1);
+    Node *temp = dummyNode;
+    while (leftHead != nullptr && rightHead != nullptr)
+    {
+        if (leftHead->data <= rightHead->data)
+        {
+            temp->next = leftHead;
+            temp = temp->next;
+            leftHead = leftHead->next;
+        }
+        else
+        {
+            temp->next = rightHead;
+            temp = temp->next;
+            rightHead = rightHead->next;
+        }
+    }
+    if (leftHead)
+        temp->next = leftHead;
+    else
+        temp->next = rightHead;
+
+    return dummyNode->next;
+}
+Node *ms(Node *head)
+{
+    if (head == nullptr || head->next == nullptr)
+        return head;
+
+    Node *mid = midOfLL(head);
+    Node *leftHead = head;
+    Node *rightHead = mid->next;
+    mid->next = nullptr;
+
+    leftHead = ms(leftHead);
+    rightHead = ms(rightHead);
+    return merge(leftHead, rightHead);
+}
+Node *sortLL(Node *head)
+{
+    // Brute
+    // Using array just store the elements in the array and then sort the array and then overwrite the LL
+    // Time complexity - O(nlogn) with two passes
+    // Space complexity - O(n) with extra space for array
+
+    // Optimal
+    // Time complexity - O(nlogn)
+    // Space complexity - O(1) for extra space but O(log n) for recursion stack
+    return ms(head);
+}
+
+Node *sortLLwith012(Node *head)
+{
+    // Brute
+    // take three counters for 0, 1 and 2 and then overwrite the LL
+    // Time complexity - O(n) with two passes
+    // Space complexity - O(1)
+
+    // Optimal
+    // Time complexity - O(n) with one pass
+    // Space complexity - O(1)
+    if (head == nullptr || head->next == nullptr)
+        return head;
+    Node *zero = new Node(-1);
+    Node *temp0 = zero;
+    Node *one = new Node(-1);
+    Node *temp1 = one;
+    Node *two = new Node(-1);
+    Node *temp2 = two;
+
+    Node *temp = head;
+    while (temp)
+    {
+        if (temp->data == 0)
+        {
+            zero->next = temp;
+            zero = zero->next;
+        }
+        else if (temp->data == 1)
+        {
+            one->next = temp;
+            one = one->next;
+        }
+        else
+        {
+            two->next = temp;
+            two = two->next;
+        }
+
+        temp = temp->next;
+    }
+    zero->next = (temp1->next != nullptr) ? temp1->next : temp2->next;
+    one->next = temp2->next;
+    two->next = nullptr;
+
+    delete zero;
+    delete one;
+    delete two;
+
+    return temp0->next;
+}
+
+Node *poi(Node *smaller, Node *grater, int d)
+{
+    Node *temp1 = smaller;
+    Node *temp2 = grater;
+    while (d > 0)
+    {
+        temp2 = temp2->next;
+        d--;
+    }
+    while (temp2)
+    {
+        if (temp1 == temp2)
+            return temp1;
+        temp1 = temp1->next;
+        temp2 = temp2->next;
+    }
+    return nullptr;
+}
+Node *getIntersectionNode(Node *headA, Node *headB)
+{
+    // Brute
+    // Using hash map just store the elements of one LL in the hash map and then check if the other LL has any of those elements
+    // Time complexity - O(n)
+    // Space complexity - O(n) the extra space for hash map
+
+    // Better
+    // Time complexity - O(n1+n2) with two passes
+    // Space complexity - O(1)
+    // Node *tempA = headA;
+    // int countA = 0;
+    // Node *tempB = headB;
+    // int countB = 0;
+    // while (tempA)
+    // {
+    //     countA++;
+    //     tempA = tempA->next;
+    // }
+    // while (tempB)
+    // {
+    //     countB++;
+    //     tempB = tempB->next;
+    // }
+    // if (countA <= countB)
+    //     return poi(headA, headB, countB - countA);
+    // else
+    //     return poi(headB, headA, countA - countB);
+
+    // Optimal
+    // suppose the samller LL is x steps ahead...then when it reaches null, then it comes to the larger LL and covers the x steps and until then the larger LL has also covered x steps and now they are at the same distance from the intersection point
+    // Time complexity - O(n1+n2) with one pass
+    // Space complexity - O(1)
+    Node *temp1 = headA;
+    Node *temp2 = headB;
+    while (temp1 != temp2)
+    {
+        temp1 = temp1->next;
+        temp2 = temp2->next;
+
+        if (temp1 == temp2)
+            return temp1;
+        if (temp1 == nullptr)
+            temp1 = headB;
+        else if (temp2 == nullptr)
+            temp2 = headA;
+    }
+    return temp1;
+}
+
+int carryHelper(Node *head)
+{
+    if (head == nullptr)
+        return 1;
+
+    int carry = carryHelper(head->next);
+    head->data += carry;
+
+    if (head->data < 10)
+        return 0;
+
+    head->data = 0;
+    return 1;
+}
+Node *addOne(Node *head)
+{
+    // Better
+    // Time complexity - O(n) with three passes
+    // Space complexity - O(1)
+    // Node *revHead = reverseLL(head);
+    // Node *temp = revHead;
+    // int carry = 1;
+    // while (temp)
+    // {
+    //     if (temp->data + carry == 10)
+    //     {
+    //         temp->data = 0;
+    //         carry = 1;
+    //     }
+    //     else
+    //     {
+    //         temp->data += carry;
+    //         carry = 0;
+    //         break;
+    //     }
+    //     temp = temp->next;
+    // }
+    // if(carry == 1)
+    // {
+    //     Node *newNode = new Node(1);
+    //     newNode->next = revHead;
+    //     return newNode;
+    // }
+    // return reverseLL(revHead);
+
+    // Optimal
+    // Time complexity - O(n) with one pass
+    // Space complexity - O(n) for recursion stack
+
+    int carry = carryHelper(head);
+
+    if (carry == 1)
+    {
+        Node *newHead = new Node(1);
+        newHead->next = head;
+        return newHead;
+    }
+
+    return head;
+}
+
+Node *addTwoNumbers(Node *l1, Node *l2)
+{
+    // Optimal
+    // Time complexity - O(max(n1, n2)) with one pass
+    // Space complexity - O(1) for extra space but O(n) for returning the ans
+    Node *sumNode = new Node(-1);
+    Node *head = sumNode;
+    int carry = 0;
+    while (l1 != nullptr || l2 != nullptr)
+    {
+        int sum = carry;
+        if (l1)
+            sum += l1->data;
+        if (l2)
+            sum += l2->data;
+
+        Node *newNode = new Node(sum % 10);
+        carry = sum / 10;
+
+        sumNode->next = newNode;
+        sumNode = sumNode->next;
+
+        if (l1)
+            l1 = l1->next;
+        if (l2)
+            l2 = l2->next;
+    }
+    if (carry)
+    {
+        Node *newNode = new Node(carry);
+        sumNode->next = newNode;
+        sumNode = sumNode->next;
+    }
+    return head->next;
+}
+
+
 
 int main()
 {
-    vector<int> arr = {1, 1, 2, 1};
+    vector<int> arr = {4, 5, 6};
 
     // Node y= Node(arr[0],nullptr); // Simply an object
     // cout<<y.data<<"\n";
@@ -569,5 +919,7 @@ int main()
     // cout<<checkIfPresent(head,8)<<"\n";
 
     printLL(head);
-    cout << checkPanlindrome(head) << "\n";
+    head = addOne(head);
+    printLL(head);
+    // cout << addOne(head) << "\n";
 }
