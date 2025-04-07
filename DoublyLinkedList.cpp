@@ -39,12 +39,12 @@ void printDLL(Node *head)
 Node *convertArr2DLL(vector<int> &arr)
 {
     Node *head = new Node(arr[0]);
-    Node *prev = head;
+    Node *back = head;
     for (int i = 1; i < arr.size(); i++)
     {
-        Node *temp = new Node(arr[i], nullptr, prev);
-        prev->next = temp;
-        prev = temp;
+        Node *temp = new Node(arr[i], nullptr, back);
+        back->next = temp;
+        back = temp;
     }
     return head;
 }
@@ -103,11 +103,11 @@ Node *removeKthElement(Node *head, int k)
         count++;
         temp = temp->next;
     }
-    Node *prev = temp->back;
-    prev->next = temp->next;
+    Node *back = temp->back;
+    back->next = temp->next;
     if (temp->next != nullptr)
     {
-        temp->next->back = prev; // if temp is not the last element
+        temp->next->back = back; // if temp is not the last element
         temp->next = nullptr;
     }
     temp->back = nullptr;
@@ -226,6 +226,112 @@ Node *reverseDLL(Node *head)
     }
     return current;
 }
+
+void deleteAllOccurOfX(struct Node **head_ref, int x)
+{
+    // Optimal
+    // Time complexity - O(n) with one pass
+    // Space complexity - O(1)
+    Node *temp = *head_ref;
+    while (temp)
+    {
+        if (temp->data == x)
+        {
+            Node *delNode = temp;
+
+            if (temp == (*head_ref))
+            {
+                *head_ref = (*head_ref)->next;
+                if (temp)
+                    temp->back = nullptr;
+            }
+            else if (temp->next == nullptr)
+                temp->back->next = nullptr;
+            else
+            {
+                temp->back->next = temp->next;
+                temp->next->back = temp->back;
+            }
+            temp = temp->next;
+            delete delNode;
+        }
+        else
+            temp = temp->next;
+    }
+}
+
+// Given a sorted DLL
+
+Node *findTail(Node *head)
+{
+    Node *temp = head;
+    while (temp->next != nullptr)
+        temp = temp->next;
+    return temp;
+}
+vector<pair<int, int>> findPairsWithGivenSum(Node *head, int target)
+{
+    // Brute
+    // Starting with head check for each node with all the other nodes
+    // Time complexity - O(n^2) with two passes
+    // Space complexity - O(1)
+
+    // Optimal
+    // Time complexity - O(n) with two pass
+    // Space complexity - O(1) but uses extra space of O(n) for returning pairs
+    vector<pair<int, int>> ans;
+    Node *left = head;
+    Node *right = findTail(head);
+
+    while (left->data < right->data)
+    {
+        int sum = left->data + right->data;
+        if (sum == target)
+        {
+            ans.emplace_back(left->data, right->data);
+            left = left->next;
+            right = right->back;
+        }
+        else if (sum > target)
+            right = right->back;
+        else
+            left = left->next;
+    }
+    return ans;
+}
+
+Node *removeDuplicates(struct Node *head)
+{
+    // Optimal
+    // Time complexity - O(n) with one pass
+    // Space complexity - O(1)
+
+    if (head == nullptr || head->next == nullptr)
+        return head;
+
+    Node *left = head;
+    Node *right = head->next;
+    while (right)
+    {
+        if (left->data == right->data)
+        {
+            Node *delNode = right;
+            left->next = right->next;
+            if (right->next != nullptr)
+                right->next->back = left;
+
+            right = right->next;
+            delete delNode;
+        }
+        else
+        {
+            left = left->next;
+            right = right->next;
+        }
+    }
+    return head;
+}
+
 
 
 
