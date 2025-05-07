@@ -1,3 +1,5 @@
+//  sort(ans.begin(),ans.end(),greater<int>()); use greater<int>() to sort in descending order
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -105,7 +107,7 @@ void mergeSort(vector<int> &arr, int l, int r)
 {
     // Time Complexity - O(nlogn) for all three best,worst or average
     // Space Complexity - O(n)
-    
+
     if (l == r)
         return;
     int m = (l + r) / 2;
